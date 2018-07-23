@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import object.structure.Cell;
+import object.structure.Sound;
 import object.structure.Square;
 
 /**
@@ -37,6 +38,8 @@ public class Blood extends Window{
     private Cell background_pos;
     private Cell[] cell_status;
     
+    private Sound backSound,clickSound,errorSound;
+    private Sound cellSound,therapySound,timeOutSound,surgerySound;
     
     private Image cellImg,chemoImg,radiationImg,surgeryImg,pendingCell;
     private int cell,chemo,radiation,surgery;

@@ -45,7 +45,7 @@ public class Dashboard extends Window{
     private int cell,radiation,chemo,surgery;
     private String userName;
 
-    private volatile Sound sound;
+    private Sound backSound,clickSound,errorSound;
     
     public Dashboard(GameManager manager){
         this.manager = manager;
@@ -54,8 +54,10 @@ public class Dashboard extends Window{
         playBtFont = Game.Fonts.getFont("blow.ttf",Font.BOLD,37);
         userInfoFont =  Game.Fonts.getFont("courier.ttf",Font.BOLD,25);
         usernameFont = Game.Fonts.getFont("courier.ttf",Font.BOLD,40);
-        sound = Game.getSound("dashboard.wav");
-        sound.loop();
+        backSound = Game.getSound("dashboard.wav");
+        clickSound = Game.getSound("option.wav");
+        errorSound = Game.getSound("error.wav");
+        backSound.loop();
        
         loadImages();
         loadInformations();
@@ -257,13 +259,25 @@ public class Dashboard extends Window{
             if(toolBt[i].isInside(x, y)){
                 switch(i){
                     case 0: if(userCash>=10 && chemo<10)
-                                {userCash-=10;chemo++;save();}break;
+                                {userCash-=10;chemo++;save();clickSound.play();}
+                            else
+                                errorSound.play();
+                            break;
                     case 1: if(userCash>=15 && cell<10)
-                                {userCash-=15;cell++;save();} break;
+                                {userCash-=15;cell++;save();clickSound.play();}
+                            else
+                                errorSound.play();
+                            break;
                     case 2: if(userCash>=15 && radiation<10)
-                                {userCash-=15;radiation++;save();} break;
+                                {userCash-=15;radiation++;save();clickSound.play();}
+                            else
+                                errorSound.play();
+                            break;
                     case 3: if(userCash>=20 && surgery<10)
-                                {userCash-=20;surgery++;save();} break;
+                                {userCash-=20;surgery++;save();clickSound.play();}
+                            else    
+                                errorSound.play();
+                            break;
                 }
             }
         }
@@ -272,18 +286,21 @@ public class Dashboard extends Window{
         for(int i=0; i<areasBt.length; i++){
             if(areasBt[i].isInside(x, y)){
                 areaSelected = i;
+                clickSound.play();
             }
         }
     }
     private void checkPlayClick(int x, int y){
-        sound.stop();
         if(playButton.isInside(x, y)){
             if(ROW == areaSelected){
                 switch(areaSelected){
-                    case 0:manager.loadWindow(BLOOD); break;
-                    case 1:manager.loadWindow(BREAST);break;
-                    case 2:manager.loadWindow(LUNG);break;
+                    case 0: backSound.stop(); manager.loadWindow(BLOOD); break;
+                    case 1: backSound.stop(); manager.loadWindow(BREAST);break;
+                    case 2: backSound.stop(); manager.loadWindow(LUNG);break;
                 }
+            }
+            else{
+                errorSound.play();
             }
         }
     }

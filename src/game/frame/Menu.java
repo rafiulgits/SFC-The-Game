@@ -30,7 +30,7 @@ public class Menu extends Window{
         this.manager = manager;
         
         font = Game.Fonts.getFont("TooneyNoodleNF.ttf", Font.BOLD, 50);
-        selectionSound = Game.getSound("option_selection.wav");
+        selectionSound = Game.getSound("option.wav");
         options_pos = new Square[options.length];
         
         options_pos[0] = new Square(340,100);
@@ -109,24 +109,7 @@ public class Menu extends Window{
 
     @Override
     public void mouseClickd(int x, int y) {
-        for(int i=0; i<options.length; i++){
-            if(options_pos[i].isInside(x, y)){
-                switch(i){
-                    case 0: manager.loadWindow(Window.NEW_USER); break;
-                    case 1:{
-                        if(isSaved()){
-                        manager.loadWindow(Window.DASHBOARD);
-                        }
-                        else{
-
-                        }
-                    }break;
-                    case 2:break;
-                    case 3:manager.loadWindow(Window.TRAININHG);break;
-                    case 4:break;
-                }
-            }
-        }
+        
     }
     
     @Override

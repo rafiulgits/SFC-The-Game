@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import object.structure.Square;
+import object.structure.Sound;
 
 /**
  *
@@ -19,8 +20,9 @@ import object.structure.Square;
  */
 public class NewUser extends Window{
     private String userName;
-    private Square cancelBt,createBt;
-    private Font textFont,btFont;
+    private final Square cancelBt,createBt;
+    private final Font textFont,btFont;
+    private final Sound typingSound,errorSound;
     
     public NewUser(GameManager manager){
         this.manager = manager;
@@ -31,6 +33,9 @@ public class NewUser extends Window{
         
         textFont = Game.Fonts.getFont("Courier.ttf",Font.BOLD, 30);
         btFont = Game.Fonts.getFont("TooneyNoodleNF.ttf", Font.BOLD, 25);
+        
+        typingSound = Game.getSound("option.wav");
+        errorSound = Game.getSound("error.wav");
     }
     private void saveUser(){
         File file = new File("res/files/info.FILE");
@@ -89,21 +94,30 @@ public class NewUser extends Window{
     public void keyPressed(int key) {
         if(userName.length() < 10){
             if(key>=48 && key<=57){
-            userName += (char)key;
+                typingSound.play();
+                userName += (char)key;
             }
             else if(key>=65 && key<=90){
+                typingSound.play();
                 userName += (char)key;
             }
         }
         
         if(key == 8){
             //backspace functionality
-            if(userName.length() > 0)
+            if(userName.length() > 0){
+                typingSound.play();
                 userName = userName.substring(0, userName.length()-1);
+            }
+            else{
+                errorSound.play();
+            }
+                
         }
         else if(key == 10){
             //enter functionality
             if(!userName.isEmpty()){
+                typingSound.play();
                 saveUser();
                 manager.loadWindow(Window.DASHBOARD);
             }
@@ -118,10 +132,12 @@ public class NewUser extends Window{
     @Override
     public void mouseClickd(int x, int y) {
         if(cancelBt.isInside(x, y)){
+            typingSound.play();
             manager.loadWindow(Window.MENU);
         }
         if(createBt.isInside(x, y)){
              if(!userName.isEmpty()){
+                 typingSound.play();
                  saveUser();
                  manager.loadWindow(Window.DASHBOARD);
              }

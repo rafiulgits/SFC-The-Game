@@ -24,7 +24,7 @@ public class GameManager {
     
     public GameManager() {
         currentIndex = -1;
-        loadWindow(Window.DASHBOARD); 
+        loadWindow(Window.MENU); 
     }
     //window change
     public void loadWindow(int name){
