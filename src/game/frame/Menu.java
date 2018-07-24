@@ -101,6 +101,7 @@ public class Menu extends Window{
                         
                     }                  
                 }break;
+                case 2: manager.loadWindow(Window.HOW_TO_PLAY); break;
                 case 3: manager.loadWindow(Window.TRAININHG); break;
                 case 4: manager.gameExit(); break;
             }

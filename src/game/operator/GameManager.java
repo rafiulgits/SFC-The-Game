@@ -1,6 +1,7 @@
 package game.operator;
 
 import game.frame.Dashboard;
+import game.frame.HowToPlay;
 import game.frame.Menu;
 import game.frame.NewUser;
 import game.frame.Opening;
@@ -74,6 +75,11 @@ public class GameManager {
             case Window.OPENING: {
                 currentWindow = new Opening(this);
                 currentIndex = Window.OPENING;
+                break;
+            }
+            case Window.HOW_TO_PLAY: {
+                currentWindow = new HowToPlay(this);
+                currentIndex = Window.HOW_TO_PLAY;
                 break;
             }
         }

@@ -44,6 +44,7 @@ public class Dashboard extends Window{
     private int userCash, userPoint;
     private int cell,radiation,chemo,surgery;
     private String userName;
+    private String highScorer,highScore;
 
     private Sound backSound,clickSound,errorSound;
     
@@ -70,18 +71,16 @@ public class Dashboard extends Window{
         radioImg = Game.getImage("/image/level/radiation.png");
         surgeryImg = Game.getImage("/image/level/scissor.png");
     }
-    private void loadInformations(){
-        File file = new File("res/files/info.FILE");
+    private void loadInformations(){    
         String store = "";
         try {
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
+            File file = new File("res/files/info.FILE");
+            BufferedReader br = new BufferedReader(new FileReader(file));
             String temp;
             while((temp=br.readLine()) != null){
                 store += temp;
             }
             br.close();
-            fr.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex){
@@ -97,6 +96,22 @@ public class Dashboard extends Window{
         chemo = Integer.parseInt(st.nextElement().toString());
         radiation = Integer.parseInt(st.nextElement().toString());
         surgery = Integer.parseInt(st.nextElement().toString());
+        
+        //load highScore file
+        store = "";
+        try{
+            File file = new File("res/files/high.FILE");
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            store = br.readLine();
+            br.close();
+        }catch (FileNotFoundException ex){
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }catch(IOException ex){
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        st = new StringTokenizer(store,":");
+        highScorer = st.nextElement().toString();
+        highScore = st.nextElement().toString();
     }
     private void loadButtons(){
         areasBt = new Square[3];
@@ -151,6 +166,7 @@ public class Dashboard extends Window{
         graph.drawString(Integer.toString(userPoint),140,90);
         graph.drawString("Credit:", 20, 135);
         graph.drawString("$"+Integer.toString(userCash),140,135);
+        graph.drawString("Record:"+highScorer+"("+highScore+")",20, 180);
         
         //play button
         graph.setColor(Color.LIGHT_GRAY);
@@ -215,7 +231,11 @@ public class Dashboard extends Window{
     //override methods
     @Override
     public void update() {
-        
+        if(userPoint > Integer.parseInt(highScore)){
+            highScore = Integer.toString(userPoint);
+            highScorer = userName;
+            saveHighScore();
+        }
     }
 
     @Override
@@ -314,8 +334,7 @@ public class Dashboard extends Window{
     private void save(){
         File file = new File("res/files/info.FILE");
         try {
-            FileWriter fw = new FileWriter(file);
-            BufferedWriter bw = new BufferedWriter(fw);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
             /**  
              ** File:1 will write 
              * 1. Username
@@ -331,10 +350,21 @@ public class Dashboard extends Window{
                     Integer.toString(radiation)+":"+Integer.toString(surgery));
             
             bw.flush();
-            fw.flush();
             bw.close();
-            fw.close();
         } catch (IOException ex) {
+            Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void saveHighScore(){
+        File file = new File("res/files/high.FILE");
+        try{
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+            bw.write(highScorer+":"+highScore);
+            bw.flush();
+            bw.close();
+        } catch(FileNotFoundException ex){
+            Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
+        } catch(IOException ex){
             Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

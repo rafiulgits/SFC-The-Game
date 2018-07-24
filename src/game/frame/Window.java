@@ -18,6 +18,7 @@ public abstract class Window {
     public static final int BREAST = 6;
     public static final int PAUSE = 7;
     public static final int OPENING = 8;
+    public static final int HOW_TO_PLAY = 9;
 
     protected GameManager manager;
     
