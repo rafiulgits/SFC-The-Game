@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import object.structure.MotionCell;
+import object.structure.Sound;
 import object.structure.Square;
 
 /**
@@ -37,6 +38,10 @@ public class Breast extends Window{
     private Square background_pos;
     private MotionCell[] cell_status;
     
+    //sound
+    private Sound backSound,clickSound,errorSound,gameOverSound;
+    private Sound cellSound,therapySound,timeOutSound,surgerySound; 
+    
     private Square[] tools;
     private Image cellImg,chemoImg,radiationImg,surgeryImg,pendingCell;
     private String userName;
@@ -45,28 +50,31 @@ public class Breast extends Window{
     private int currentPoint,currentCash,selectedTool,cellCounter;
     private boolean toolsClicked,cellClicked;
     //timer
-    private final long millSec;
+    private long miliSec, pausedTime;
     private int counter;
     //gameOver detection 
-    private boolean running;
+    private boolean running,paused;
     
     public Breast(GameManager manager){
         this.manager = manager;
         running = true;
+        paused = false;
         toolsClicked = cellClicked = false;
         loadBackground();
         loadCells();
         loadInfo();
         loadTools();
-        
+        loadSounds();
         currentPoint = currentCash = cellCounter = 0;
         selectedTool = -1;
         
-        millSec = System.currentTimeMillis();
+        miliSec = System.currentTimeMillis();
         counter = 0;
         
         toolsFont = Game.Fonts.getFont("Courier.ttf",Font.BOLD,30);
         numFont = Game.Fonts.getFont("mistv.ttf",Font.BOLD,40);
+        
+        backSound.loop();
     }
     
     private void loadBackground(){
@@ -137,6 +145,16 @@ public class Breast extends Window{
         tools[1] = new Square(470,30,120,40);
         tools[2] = new Square(620,30,120,40);
         tools[3] = new Square(770,30,120,40);
+    }
+    private void loadSounds(){
+        backSound = Game.getSound("level_background.wav");
+        clickSound = Game.getSound("option.wav");
+        errorSound = Game.getSound("error.wav");
+        gameOverSound = Game.getSound("game_over.wav");
+        cellSound = Game.getSound("cell_replace.wav");
+        therapySound = Game.getSound("therapy.wav");
+        timeOutSound = Game.getSound("cell_counting_over.wav");
+        surgerySound = Game.getSound("surgery.wav");
     }
     private void drawBackground(Graphics2D graph){
         drawImage(background,background_pos,graph);
@@ -218,14 +236,14 @@ public class Breast extends Window{
                 pos.getWidth(),pos.getHeight(),null);
     }
     private void timeCounter(){
-        counter = (int)((System.currentTimeMillis() - millSec)/1000);
+        counter = (int)((System.currentTimeMillis() - miliSec)/1000);
     }
     /**
      * Override methods
     */
     @Override
     public void update() {
-        if(!running) return;
+        if(!running || paused) return;
         for(int i=0; i<TOTAL; i++){
             cell_status[i].move();
         }
@@ -235,6 +253,7 @@ public class Breast extends Window{
 
     @Override
     public void draw(Graphics2D graph) {
+        if(paused) return;
         if(running){
             drawBackground(graph);
             drawCells(graph);
@@ -247,8 +266,18 @@ public class Breast extends Window{
     }
 
     @Override
+    public void resume(){
+        paused = false;
+        miliSec += (System.currentTimeMillis()-pausedTime);
+        backSound.loop();
+    }
+    
+    @Override
     public void keyPressed(int key) {
         if(key == KeyEvent.VK_ESCAPE){
+            backSound.stop();
+            paused = true;
+            pausedTime = System.currentTimeMillis();
             manager.loadWindow(Window.PAUSE);
         }
     }
@@ -276,6 +305,7 @@ public class Breast extends Window{
                 continue;
             }
             if(!cell_status[i].isCancer()){
+                errorSound.play();
                 attackReaction(i);
                 cellClicked = true;
                 break;
@@ -287,6 +317,7 @@ public class Breast extends Window{
             }
         }
         if(!cellClicked && !toolsClicked){
+            errorSound.play();
             switch(selectedTool){
                 case -1: break;
                 case 0: if(cell>0) cell-=1; break;
@@ -322,9 +353,11 @@ public class Breast extends Window{
             return;
         }
         else if(selectedTool == 0){
+            errorSound.play();
             cell-=1;
         }
         else if(selectedTool == 1 && chemo > 0){
+            therapySound.play();
             chemo-=1;
             cell_status[index].setCountDown(4);
             new Thread(new Runnable(){
@@ -333,6 +366,7 @@ public class Breast extends Window{
                         Thread.sleep(3900);
                     } catch (InterruptedException e) {
                     }
+                    timeOutSound.play();
                     cellCounter++;
                     currentPoint +=4;
                     currentCash +=15;
@@ -341,6 +375,7 @@ public class Breast extends Window{
             }).start();
         }
         else if(selectedTool == 2 && radiation > 0){
+            therapySound.play();
             radiation-=1;
             cell_status[index].setCountDown(2);
             new Thread(new Runnable(){
@@ -349,6 +384,7 @@ public class Breast extends Window{
                         Thread.sleep(1900);
                     } catch (InterruptedException e) {
                     }
+                    timeOutSound.play();
                     cellCounter++;
                     currentPoint += 3;
                     currentCash += 15;
@@ -356,6 +392,7 @@ public class Breast extends Window{
             }).start();
         }
         else if(selectedTool == 3 && surgery > 0){
+            surgerySound.play();
             surgery-=1;
             cell_status[index].setCancer(false);
             cell_status[index].setAlive(false);
@@ -367,6 +404,7 @@ public class Breast extends Window{
     private void checkToolsClick(int x, int y){
         for(int i=0; i<tools.length; i++){
             if(tools[i].isInside(x, y)){
+                clickSound.play();
                 selectedTool = i;
                 toolsClicked = true;
                 break;
@@ -376,13 +414,16 @@ public class Breast extends Window{
     private void objectiveFinish(){
         if(cellCounter==TOTAL || counter==GAME_TIME){
             running = false;
+            backSound.stop();
+            gameOverSound.play();
             save();
             new Thread(new Runnable(){
                 public void run(){
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(4000);
                     } catch (InterruptedException e) {
                     }
+                    gameOverSound.stop();
                     manager.loadWindow(DASHBOARD);
                 }
             }).start();

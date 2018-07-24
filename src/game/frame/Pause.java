@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import object.structure.Sound;
 import object.structure.Square;
 
 /**
@@ -20,11 +21,13 @@ public class Pause extends Window{
     private Square[] options_pos;
     private int now;
     private Font font;
+    private Sound selectionSound;
     
     public Pause(GameManager manager){
         this.manager = manager;
         
         font = Game.Fonts.getFont("TooneyNoodleNF.ttf", Font.BOLD, 50);
+        selectionSound = Game.getSound("option.wav");
         options_pos = new Square[options.length];
         options_pos[0] = new Square(340,100);
         options_pos[1] = new Square(295,180);
@@ -54,10 +57,15 @@ public class Pause extends Window{
             graph.drawString(options[i],options_pos[i].getX(),options_pos[i].getY());
         }
     }
-
+    
+    @Override
+    public void resume(){
+        
+    }
     @Override
     public void keyPressed(int key) {
         if(key == KeyEvent.VK_UP){
+            selectionSound.play();
             switch(now){
                 case 0: now = 3; break;
                 case 1: now = 0; break;
@@ -66,6 +74,7 @@ public class Pause extends Window{
             }
         }
         if(key == KeyEvent.VK_DOWN){
+            selectionSound.play();
             switch(now){
                 case 0: now = 1; break;
                 case 1: now = 2; break;

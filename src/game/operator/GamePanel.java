@@ -25,7 +25,7 @@ public class GamePanel extends JPanel
     private BufferedImage screen;
     private Graphics2D pane;
     
-    protected static boolean gameRunning;
+    private boolean gameRunning;
     private boolean gameOver;
     
     public GamePanel() {
@@ -47,6 +47,10 @@ public class GamePanel extends JPanel
     
     private void update(){
         manager.update();
+        if(manager.isExit()){
+            gameRunning = false;
+            gameOver = true;
+        }
     }
     private void draw(){
         manager.draw(pane);
@@ -96,6 +100,7 @@ public class GamePanel extends JPanel
                 e.printStackTrace();
             }
         }
+        TheGame.gameFrame.dispose();
     }
 
     @Override

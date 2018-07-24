@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import object.structure.Sound;
 
 /**
  *
@@ -29,6 +30,7 @@ public class Training extends Window{
     private Image anim,goodCell,cancerCell,pendingCell,chemo,radiation,surgery;
     private int selectY;
     private int now;
+    private Sound selectionSound;
     
     public Training(GameManager manager) {
         this.manager = manager;
@@ -36,6 +38,7 @@ public class Training extends Window{
         labelFont = Game.Fonts.getFont("Courier.ttf", Font.BOLD, 30);
         textFont = Game.Fonts.getFont("Courier.ttf", Font.BOLD, 20);
         anim = Game.getImage("/animation/doctor.gif"); // doctor gif
+        selectionSound = Game.getSound("option.wav");
         basicLoaded = areaLoaded = false;
         selectY = 340; now = 0;
         
@@ -187,6 +190,7 @@ public class Training extends Window{
     @Override
     public void keyPressed(int key) {
         if(key == KeyEvent.VK_UP){
+            selectionSound.play();
             switch(now){
                 case 0: now = 2; selectY = 440; break;
                 case 1: now = 0; selectY = 340; break;
@@ -194,6 +198,7 @@ public class Training extends Window{
             }
         }
         else if(key == KeyEvent.VK_DOWN){
+            selectionSound.play();
             switch(now){
                 case 0: now = 1; selectY = 390; break;
                 case 1: now = 2; selectY = 440; break;
@@ -206,10 +211,15 @@ public class Training extends Window{
     }
 
     @Override
+    public void resume(){
+        
+    }
+    
+    @Override
     public void keyTyped(int key) {
         
     }
-
+    
     @Override
     public void mouseClickd(int x, int y) {
         //options select checking 

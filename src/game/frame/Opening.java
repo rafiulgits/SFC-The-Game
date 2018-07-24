@@ -58,7 +58,11 @@ public class Opening extends Window{
         graph.setFont(textFont);
         graph.drawString("Save From Cancer", 260, 570);
     }
-
+    
+    @Override
+    public void resume(){
+        
+    }
     @Override
     public void keyPressed(int key) {
         

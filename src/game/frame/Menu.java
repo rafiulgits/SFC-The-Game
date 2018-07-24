@@ -66,6 +66,11 @@ public class Menu extends Window{
     }
 
     @Override
+    public void resume(){
+        
+    }
+    
+    @Override
     public void keyPressed(int key) {
         if(key == KeyEvent.VK_UP){
             selectionSound.play();

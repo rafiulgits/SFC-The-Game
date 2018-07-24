@@ -91,6 +91,10 @@ public class NewUser extends Window{
     }
 
     @Override
+    public void resume(){
+        
+    }
+    @Override
     public void keyPressed(int key) {
         if(userName.length() < 10){
             if(key>=48 && key<=57){

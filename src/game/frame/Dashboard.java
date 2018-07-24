@@ -228,11 +228,18 @@ public class Dashboard extends Window{
         drawToolShop(graph);
         
     }
-
+    
+    @Override
+    public void resume(){
+        backSound.loop();
+    }
     @Override
     public void keyPressed(int key) {
         switch(key){
-            case KeyEvent.VK_ESCAPE:manager.loadWindow(Window.PAUSE);break;
+            case KeyEvent.VK_ESCAPE:
+                backSound.stop();
+                manager.loadWindow(Window.PAUSE);
+                break;
         }
     }
 

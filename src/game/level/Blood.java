@@ -38,7 +38,7 @@ public class Blood extends Window{
     private Cell background_pos;
     private Cell[] cell_status;
     
-    private Sound backSound,clickSound,errorSound;
+    private Sound backSound,clickSound,errorSound,gameOverSound;
     private Sound cellSound,therapySound,timeOutSound,surgerySound;
     
     private Image cellImg,chemoImg,radiationImg,surgeryImg,pendingCell;
@@ -55,13 +55,14 @@ public class Blood extends Window{
     //timer
     private long miliSec;
     private int counter;
-    
+    private long pausedTime;
     //game over detection
-    private boolean running;
+    private boolean running,paused;
     
     public Blood(GameManager manager){
         this.manager = manager;
         running = true;
+        paused = false;
         cellClicked = toolsClicked = false;
         selectedTool = -1;
         cellCounter = currentPoint = currentCash = 0;
@@ -72,9 +73,12 @@ public class Blood extends Window{
         loadCells();
         loadInfo();
         loadTools();
+        loadSounds();
         
         miliSec = System.currentTimeMillis();
         counter = 0;
+        
+        backSound.loop();
     }
     
     private void loadBackground(){
@@ -103,14 +107,12 @@ public class Blood extends Window{
         File file = new File("res/files/info.FILE");
         String store = "";
         try {
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
+            BufferedReader br = new BufferedReader(new FileReader(file));
             String temp;
             while((temp=br.readLine()) != null){
                 store += temp;
             }
             br.close();
-            fr.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex){
@@ -124,6 +126,16 @@ public class Blood extends Window{
         chemo = Integer.parseInt(st.nextElement().toString());
         radiation = Integer.parseInt(st.nextElement().toString());
         surgery = Integer.parseInt(st.nextElement().toString());  
+    }
+    private void loadSounds(){         
+        backSound = Game.getSound("level_background.wav");
+        clickSound = Game.getSound("option.wav");
+        errorSound = Game.getSound("error.wav");
+        gameOverSound = Game.getSound("game_over.wav");
+        cellSound = Game.getSound("cell_replace.wav");
+        therapySound = Game.getSound("therapy.wav");
+        timeOutSound = Game.getSound("cell_counting_over.wav");
+        surgerySound = Game.getSound("surgery.wav");
     }
     private void loadTools(){
         cellImg = good_cell;
@@ -226,19 +238,22 @@ public class Blood extends Window{
         counter = (int)((System.currentTimeMillis() - miliSec)/1000);
     }
    
-    private void gameOver(){
+    private void objectiveFinish(){
         if(counter==GAME_TIME || cellCounter==TOTAL){
+            backSound.stop();
+            gameOverSound.play();
             running = false;
             save();
             new Thread(new Runnable(){
                 public void run(){
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(4000);
                     } catch (InterruptedException e) {
                     }
+                    gameOverSound.stop();
                     manager.loadWindow(DASHBOARD);
                 }
-            });
+            }).start();
         }
     }
     /**
@@ -246,9 +261,9 @@ public class Blood extends Window{
     */
     @Override
     public void update() {
-        if(!running) return;
+        if(!running || paused) return;
         timeCounter();
-        gameOver();
+        objectiveFinish();
         //cells flow
         for(int i=0; i<TOTAL; i++){
             cell_status[i].setY(cell_status[i].getY()+1);
@@ -259,6 +274,8 @@ public class Blood extends Window{
 
     @Override
     public void draw(Graphics2D graph) {
+        if(paused) return;
+        
         if(running){
             drawBackground(graph);
             drawCells(graph);
@@ -270,10 +287,22 @@ public class Blood extends Window{
         }
 
     }
-
+    
+    @Override
+    public void resume(){
+        paused = false;
+        miliSec += (System.currentTimeMillis()-pausedTime);
+        backSound.loop();
+    }
+    
     @Override
     public void keyPressed(int key) {
+        if(paused) return;
+        
         if(key == KeyEvent.VK_ESCAPE){
+            backSound.stop();
+            pausedTime = System.currentTimeMillis();
+            paused = true;
             manager.loadWindow(Window.PAUSE);
         }
     }
@@ -285,6 +314,8 @@ public class Blood extends Window{
 
     @Override
     public void mouseClickd(int x, int y) {
+        if(paused) return;
+        
         checkCellClicked(x, y);
         checkToolsClick(x, y);
         toolsClicked = false;
@@ -301,6 +332,7 @@ public class Blood extends Window{
                 continue;
             }
             if(!cell_status[i].isCancer()){
+                errorSound.play();
                 attackReaction(i);
                 cellClicked = true;
                 break;
@@ -312,6 +344,7 @@ public class Blood extends Window{
             }
         }
         if(!cellClicked && !toolsClicked){
+            errorSound.play();
             switch(selectedTool){
                 case -1: break;
                 case 0: if(cell>0) cell-=1; break;
@@ -347,6 +380,7 @@ public class Blood extends Window{
             return;
         }
         else if(selectedTool == 0 && cell>0){
+            cellSound.play();
             cell-=1;
             currentPoint+=3;
             currentCash+=15;
@@ -354,6 +388,7 @@ public class Blood extends Window{
             cell_status[index].setCancer(false);
         }
         else if(selectedTool == 1 && chemo > 0){
+            therapySound.play();
             chemo-=1;
             cell_status[index].setCountDown(4);
             
@@ -363,6 +398,7 @@ public class Blood extends Window{
                         Thread.sleep(3900);
                     } catch (InterruptedException e) {
                     }
+                    timeOutSound.play();
                     cellCounter++;
                     currentPoint +=4;
                     currentCash +=15;
@@ -371,6 +407,7 @@ public class Blood extends Window{
             }).start();
         }
         else if(selectedTool == 2 && radiation > 0){
+            therapySound.play();
             radiation-=1;
             cell_status[index].setCountDown(2);
             new Thread(new Runnable(){
@@ -379,6 +416,7 @@ public class Blood extends Window{
                         Thread.sleep(1900);
                     } catch (InterruptedException e) {
                     }
+                    timeOutSound.play();
                     cellCounter++;
                     currentPoint += 3;
                     currentCash += 15;
@@ -386,12 +424,14 @@ public class Blood extends Window{
             }).start();
         }
         else if(selectedTool == 3 && surgery > 0){
+            errorSound.play();
             surgery-=1;
         }
     }
     private void checkToolsClick(int x, int y){
         for(int i=0; i<tools.length; i++){
             if(tools[i].isInside(x, y)){
+                clickSound.play();
                 selectedTool = i;
                 toolsClicked = true;
                 break;
@@ -399,21 +439,6 @@ public class Blood extends Window{
         }
     }
     
-    private void objectiveFinish(){
-        if(cellCounter == TOTAL || counter == 60){
-            running = false;
-            save();
-            new Thread(new Runnable(){
-                public void run(){
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                    }
-                    manager.loadWindow(DASHBOARD);
-                }
-            }).start();
-        }
-    }
     private void save(){
         new Thread(new Runnable(){
             public void run(){
@@ -421,8 +446,7 @@ public class Blood extends Window{
                 userPoint += currentPoint;
                 File file = new File("res/files/info.FILE");
                 try {
-                    FileWriter fw = new FileWriter(file);
-                    BufferedWriter bw = new BufferedWriter(fw);
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(file));
                     /**  
                      ** File:1 will write 
                      * 1. Username
@@ -438,9 +462,7 @@ public class Blood extends Window{
                             Integer.toString(radiation)+":"+Integer.toString(surgery));
 
                     bw.flush();
-                    fw.flush();
                     bw.close();
-                    fw.close();
                 } catch (IOException ex) {
                     Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
                 }

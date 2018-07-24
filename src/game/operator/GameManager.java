@@ -20,11 +20,12 @@ public class GameManager {
 
     private int currentIndex;
     private Window currentWindow,releasedWindow;
-    
+    private boolean exitClicked;
     
     public GameManager() {
+        exitClicked = false;
         currentIndex = -1;
-        loadWindow(Window.MENU); 
+        loadWindow(Window.OPENING); 
     }
     //window change
     public void loadWindow(int name){
@@ -80,6 +81,7 @@ public class GameManager {
     public void loadReleased(){
         Window temp = currentWindow;
         currentWindow = releasedWindow;
+        currentWindow.resume();
         releasedWindow = temp;
         temp = null;
         System.gc();
@@ -111,7 +113,10 @@ public class GameManager {
         currentWindow.mouseClickd(x, y);
     }
     public void gameExit(){
-        
+        exitClicked = true;
+    }
+    protected boolean isExit(){
+        return exitClicked;
     }
 }
 

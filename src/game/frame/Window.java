@@ -2,7 +2,6 @@ package game.frame;
 
 import game.operator.GameManager;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
 
 /**
  *
@@ -24,6 +23,7 @@ public abstract class Window {
     
     public abstract void update();
     public abstract void draw(Graphics2D graph);
+    public abstract void resume();
     public abstract void keyPressed(int key);
     public abstract void keyTyped(int key);
     public abstract void mouseClickd(int x, int y);
