@@ -26,7 +26,7 @@ import object.structure.Square;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class Blood extends Window{
 

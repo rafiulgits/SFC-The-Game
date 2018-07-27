@@ -10,9 +10,12 @@ import object.structure.Sound;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class Opening extends Window{
+    /**
+     * Opening class is stand for manage game opening view functionality
+     */
 
     private static final int TIME = 4;
     private Image anim;
@@ -30,6 +33,11 @@ public class Opening extends Window{
         counter();
         
     }
+    /**
+     * This method is called from constructor after constructor loaded its 
+     * parameters; this method start a thread and make a count down for closing 
+     * this opening page and call game menu
+     */
     private void counter(){
         background.play();
         new Thread(new Runnable(){
@@ -47,7 +55,7 @@ public class Opening extends Window{
     public void update() {
         
     }
-
+    
     @Override
     public void draw(Graphics2D graph) {
         graph.setBackground(Game.Colors.softGray);

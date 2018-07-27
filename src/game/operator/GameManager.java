@@ -15,10 +15,20 @@ import java.awt.Graphics2D;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class GameManager {
 
+    /**
+     * Manager of this project.This class has the control over all
+     * Window extended classes and game view or game state is changed
+     * by this class management.
+     * 
+     * @param currentIndex (integer) store the current index of Window
+     * @param currentWindow (Window) indicate the current viewing page
+     * @param releasedWindow (Window) indicate  the released window page
+     * @param exitClicked (boolean) this will fired when user pressed on exit option
+    */
     private int currentIndex;
     private Window currentWindow,releasedWindow;
     private boolean exitClicked;
@@ -28,7 +38,11 @@ public class GameManager {
         currentIndex = -1;
         loadWindow(Window.OPENING); 
     }
-    //window change
+    /**
+     * This method load a specific Window after release the previous window
+     * in releasedWindow for further use and load the currentWindow.
+     * {@code manager.loadWindow(Window.DASHBOARD);}
+    */
     public void loadWindow(int name){
         releaseWindow();
         switch(name){
@@ -84,6 +98,10 @@ public class GameManager {
             }
         }
     }
+    /**
+     * This method allow us to recycle the releasedWindow and use this 
+     * as the currentWindow
+    */
     public void loadReleased(){
         Window temp = currentWindow;
         currentWindow = releasedWindow;
@@ -92,6 +110,9 @@ public class GameManager {
         temp = null;
         System.gc();
     }
+    /**
+     * this is a private method; this method always called from loadWindow(.) method
+    */
     private void releaseWindow(){
         releasedWindow = currentWindow;
         System.gc();

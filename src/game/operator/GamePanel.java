@@ -4,18 +4,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class GamePanel extends JPanel 
         implements Runnable, KeyListener,MouseListener{
@@ -31,11 +31,18 @@ public class GamePanel extends JPanel
     public GamePanel() {
         super();
         
+        setCursor(Toolkit.getDefaultToolkit().
+                createCustomCursor(Game.getImage("/image/util/cursor.png"), 
+                        new Point(0, 0), "target"));
+        
         setPreferredSize(new Dimension(Game.WIDTH, Game.HEIGHT));
         setBackground(Color.WHITE);
         setFocusable(true);
         requestFocus();
     }
+    /** 
+     * Initialization of graphics and GameManager
+    */
     private void initial(){
         manager = new GameManager();
         screen = new BufferedImage(Game.WIDTH, Game.HEIGHT,BufferedImage.TYPE_INT_ARGB);
@@ -115,7 +122,7 @@ public class GamePanel extends JPanel
 
     @Override
     public void keyReleased(KeyEvent e) {
-        
+     
     }
 
     @Override
