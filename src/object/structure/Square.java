@@ -2,7 +2,7 @@ package object.structure;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class Square {
     private int x;

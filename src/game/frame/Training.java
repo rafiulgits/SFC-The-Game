@@ -20,7 +20,7 @@ import object.structure.Sound;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class Training extends Window{
     
@@ -214,12 +214,6 @@ public class Training extends Window{
     public void resume(){
         
     }
-    
-    @Override
-    public void keyTyped(int key) {
-        
-    }
-    
     @Override
     public void mouseClickd(int x, int y) {
         //options select checking 

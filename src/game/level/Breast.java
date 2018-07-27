@@ -26,7 +26,7 @@ import object.structure.Square;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class Breast extends Window{
     
@@ -280,11 +280,6 @@ public class Breast extends Window{
             pausedTime = System.currentTimeMillis();
             manager.loadWindow(Window.PAUSE);
         }
-    }
-
-    @Override
-    public void keyTyped(int key) {
-        
     }
 
     @Override

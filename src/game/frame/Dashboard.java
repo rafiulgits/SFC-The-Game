@@ -26,6 +26,11 @@ import object.structure.Square;
  * @author rafiul islam
  */
 public class Dashboard extends Window{
+    /**
+     * Dashboard will generate a question box when create an object
+     * of this and display it for next objective.
+     * @see loadQuestion()
+     */
     
     private static final String[][] QUESTIONS =
         {{"Bleeding","Pain in the bones or joints","Weight loss"},
@@ -35,11 +40,9 @@ public class Dashboard extends Window{
     private Image cellImg,chemoImg,radioImg,surgeryImg;
     private int ROW,NON_COL,OP_ROW,OP_COL;
     private Font font,playBtFont,userInfoFont,usernameFont;
-    private Random random;
-   
+    private Random random;  
     private Square playButton;
-    private Square[] areasBt,toolBt;
-    
+    private Square[] areasBt,toolBt;  
     private int areaSelected;
     private int userCash, userPoint;
     private int cell,radiation,chemo,surgery;
@@ -261,11 +264,6 @@ public class Dashboard extends Window{
                 manager.loadWindow(Window.PAUSE);
                 break;
         }
-    }
-
-    @Override
-    public void keyTyped(int key) {
-        
     }
 
     @Override

@@ -16,7 +16,7 @@ import object.structure.Sound;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class NewUser extends Window{
     private String userName;
@@ -126,11 +126,6 @@ public class NewUser extends Window{
                 manager.loadWindow(Window.DASHBOARD);
             }
         }
-    }
-
-    @Override
-    public void keyTyped(int key) {
-        
     }
 
     @Override

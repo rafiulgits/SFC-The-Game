@@ -18,7 +18,7 @@ import object.structure.Square;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class Menu extends Window{
     private static String[] options = {"New Game","Load Game","How To Play","Training","Exit"};
@@ -107,12 +107,6 @@ public class Menu extends Window{
             }
         }
     }
-
-    @Override
-    public void keyTyped(int key) {
-        
-    }
-
     @Override
     public void mouseClickd(int x, int y) {
         

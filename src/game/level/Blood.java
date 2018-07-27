@@ -29,45 +29,41 @@ import object.structure.Square;
  * @author rafiul islam
  */
 public class Blood extends Window{
+    /**
+     * Blood class will organize the Blood level view and its structure
+     * It extends Window class and implemented its(Window) abstract methods.
+     */
 
-    private static final int TOTAL = 9;
+    private static final int TOTAL = 9; //total cell number
     private static final int GAME_TIME = 20;
     
-    private Image background,good_cell,cancer_cell_left,cancer_cell_right;
-    
-    private Cell background_pos;
-    private Cell[] cell_status;
-    
-    private Sound backSound,clickSound,errorSound,gameOverSound;
-    private Sound cellSound,therapySound,timeOutSound,surgerySound;
-    
-    private Image cellImg,chemoImg,radiationImg,surgeryImg,pendingCell;
-    private int cell,chemo,radiation,surgery;
-    private Square[] tools;
-    private Font toolsFont,numFont;
-    
-    //from file
+    private Image background,good_cell,cancer_cell_left,cancer_cell_right;//game image   
+    private Cell background_pos; //background image position
+    private Cell[] cell_status; //cell image position structure
+    private Sound backSound,clickSound,errorSound,gameOverSound;//game sound
+    private Sound cellSound,therapySound,timeOutSound,surgerySound;//game sound
+    private Image cellImg,chemoImg,radiationImg,surgeryImg,pendingCell;//game image
+    private int cell,chemo,radiation,surgery;//game tools status(quantity)
+    private Square[] tools; // tool image position structure
+    private Font toolsFont,numFont;//level font
     private String userName;
-    private int userPoint, userCash;
-    //gameplay status
-    private int selectedTool,cellCounter,currentPoint,currentCash;
-    private boolean cellClicked,toolsClicked;
-    //timer
-    private long miliSec;
-    private int counter;
-    private long pausedTime;
-    //game over detection
-    private boolean running,paused;
+    private int userPoint, userCash; 
+    private int selectedTool,cellCounter,currentPoint,currentCash; 
+    private boolean cellClicked,toolsClicked; //for click status check
+    private long milliSec,pausedTime; //game resume time in milisec
+    private int counter; //counting non-cancer cell
+    private boolean running,paused; //game running detector
     
     public Blood(GameManager manager){
-        this.manager = manager;
-        running = true;
-        paused = false;
-        cellClicked = toolsClicked = false;
-        selectedTool = -1;
-        cellCounter = currentPoint = currentCash = 0;
-        toolsFont = Game.Fonts.getFont("Courier.ttf",Font.BOLD,30);
-        numFont = Game.Fonts.getFont("mistv.ttf",Font.BOLD,40);
+        this.manager = manager; //call Window manager
+        
+        running = true; //initially game is running 
+        paused = false; //set pause 
+        cellClicked = toolsClicked = false; //click indicator initially false
+        selectedTool = -1; //no tool will selected initially
+        cellCounter = currentPoint = currentCash = 0; //user current reward status
+        toolsFont = Game.Fonts.getFont("Courier.ttf",Font.BOLD,30); //tool drawing font
+        numFont = Game.Fonts.getFont("mistv.ttf",Font.BOLD,40); //number drawing font
         
         loadBackground();
         loadCells();
@@ -75,16 +71,22 @@ public class Blood extends Window{
         loadTools();
         loadSounds();
         
-        miliSec = System.currentTimeMillis();
-        counter = 0;
+        milliSec = System.currentTimeMillis(); //initial the timer
+        counter = 0; //set cell counting 
         
-        backSound.loop();
+        backSound.loop(); //start background music loop
     }
-    
+    /**
+     * Load background image file from resource by using 
+     * {@code Game.getImage("...")} API.
+     */
     private void loadBackground(){
         background = Game.getImage("/image/level/blood/background.jpg");
         background_pos = new Cell(0,0,Game.WIDTH,Game.HEIGHT);
     }
+    /**
+     * Load all cell images and initialize their Square position.
+     */
     private void loadCells(){
         good_cell = Game.getImage("/image/level/cell.png");
         cancer_cell_left = Game.getImage("/image/level/cancer_left.png");
@@ -103,6 +105,14 @@ public class Blood extends Window{
         cell_status[7] = new Cell(530,400,50,50,true);
         cell_status[8] = new Cell(590,400,50,50,true);
     }
+    /**
+     * this method will load user information from info.FILE situated in resource
+     * in this sequence.
+     * <ol>
+     * <li>userName</li><li>userPoint</li><li>userCash</li><li>cell</li>
+     * <li>chemo</li><li>radition</li><li>surgery</li>
+     * </ol>
+     */
     private void loadInfo(){
         File file = new File("res/files/info.FILE");
         String store = "";
@@ -127,6 +137,10 @@ public class Blood extends Window{
         radiation = Integer.parseInt(st.nextElement().toString());
         surgery = Integer.parseInt(st.nextElement().toString());  
     }
+    /**
+     * Load all sound file from game resource folder by using 
+     * {@code Game.getSound(Name)} API.
+     */
     private void loadSounds(){         
         backSound = Game.getSound("level_background.wav");
         clickSound = Game.getSound("option.wav");
@@ -137,6 +151,11 @@ public class Blood extends Window{
         timeOutSound = Game.getSound("cell_counting_over.wav");
         surgerySound = Game.getSound("surgery.wav");
     }
+    /**
+     * Load tools images from game resource folder by using
+     * {@code Game.getImage("/image/...")} API
+     * Set tools position structure by creating Square object.
+     */
     private void loadTools(){
         cellImg = good_cell;
         chemoImg = Game.getImage("/image/level/chemo.png");
@@ -150,11 +169,20 @@ public class Blood extends Window{
         tools[2] = new Square(550,10,120,40);
         tools[3] = new Square(700,10,120,40);
     }
-    
-    
+    /**
+     * Blood level background drawer with Graphics2D object.
+     */
     private void drawBackground(Graphics2D graph){
         drawImage(background, background_pos, graph);
     }
+    /**
+     * Draw cells in their corresponding Square object structure;
+     * if a cell is visible then this will draw this cell
+     * if a cell is affected in cancer then this will draw a cancer cell
+     * in this position otherwise if a cell is in radiation counting then
+     * a radiation cell(pending_cell) will draw on this and if a cell is 
+     * good in status then a good_cell(general cell) will draw.
+     */
     private void drawCells(Graphics2D graph){   
         for(int i=0; i<TOTAL; i++){
             if(!cell_status[i].isAlive())
@@ -171,6 +199,10 @@ public class Blood extends Window{
             
         }
     }
+    /**
+     * Draw game tools in this level with their corresponding Square object
+     * position.And also the quantity of individual tool drawn here.
+     */
     private void drawTools(Graphics2D graph){
         graph.setColor(Color.LIGHT_GRAY);
         for(int i=0; i<tools.length; i++){
@@ -190,6 +222,10 @@ public class Blood extends Window{
         graph.drawString(Integer.toString(surgery),765, 40);
         
     }
+    /**
+     * Draw game status: remain time, selected tool, user point,
+     * Remaining cell, user cash.
+     */
     private void drawStatus(Graphics2D graph){
         graph.setColor(Color.LIGHT_GRAY);
         graph.fill3DRect(450, 70, 200, 40, true);
@@ -218,11 +254,17 @@ public class Blood extends Window{
                     break;
         }
     }
-    //helper methods
+    /**
+     * Image drawer method with corresponding square position.
+     */
     private void drawImage(Image img,Cell pos, Graphics2D graph){
         graph.drawImage(img,pos.getX(),pos.getY(),
                 pos.getWidth(),pos.getHeight(),null);
     }
+    /**
+     * This method will call when level time finished.Then this method
+     * will draw the game over display with user earned cash and points.
+     */
     private void drawOverPage(Graphics2D graph){
         
         graph.setFont(Game.Fonts.getFont("Courier.ttf",Font.BOLD,50));
@@ -234,10 +276,22 @@ public class Blood extends Window{
         graph.drawString("Earn Cash:", 330, 300);
         graph.drawString(Integer.toString(currentCash),540,300);
     }
+    /**
+     * game level time counter method.This will check the difference 
+     * between initial time and current time and convert the milli second
+     * into second and store in counter.
+     */
     private void timeCounter(){
-        counter = (int)((System.currentTimeMillis() - miliSec)/1000);
+        counter = (int)((System.currentTimeMillis() - milliSec)/1000);
     }
-   
+   /**
+    * This method will check whether the current level get its end point
+    * by comparing time counter with game time and cell counter with total
+    * cell.If game come to its end point then this will set running as false 
+    * to detect others that game is over and stop updating.Then this will invoke
+    * drawOverPage(...) method and create a thread for invoke game dashboard
+    * after while.
+    */
     private void objectiveFinish(){
         if(counter==GAME_TIME || cellCounter==TOTAL){
             backSound.stop();
@@ -257,21 +311,26 @@ public class Blood extends Window{
         }
     }
     /**
-     * Override methods
+     * @since Window.java
+     * Update game status
+     * Draw cell by changing their Y-Axis value and make them 
+     * flow (as view)
     */
     @Override
     public void update() {
         if(!running || paused) return;
         timeCounter();
         objectiveFinish();
-        //cells flow
         for(int i=0; i<TOTAL; i++){
             cell_status[i].setY(cell_status[i].getY()+1);
             if(cell_status[i].getY()>500)
                 cell_status[i].setY(240);
         }
     }
-
+    /**
+     * @see Window.java
+     * Call all drawer method of this class by passing Graphics2D object
+     */
     @Override
     public void draw(Graphics2D graph) {
         if(paused) return;
@@ -285,16 +344,24 @@ public class Blood extends Window{
         else{
             drawOverPage(graph);
         }
-
     }
-    
+    /**
+     * @see Window.java
+     * When game goes to pause status then after resume this method will
+     * calculate the total paused time and subtract this from initial.As for this
+     * game will get the exact time when it went pause and resume from there.
+     */
     @Override
     public void resume(){
         paused = false;
-        miliSec += (System.currentTimeMillis()-pausedTime);
+        milliSec += (System.currentTimeMillis()-pausedTime);
         backSound.loop();
     }
-    
+    /**
+     * @see Window.java
+     * This method will invoke when user create any key event, then this
+     * method will check this event and make a corresponding response.
+     */
     @Override
     public void keyPressed(int key) {
         if(paused) return;
@@ -306,12 +373,11 @@ public class Blood extends Window{
             manager.loadWindow(Window.PAUSE);
         }
     }
-
-    @Override
-    public void keyTyped(int key) {
-        
-    }
-
+    /**
+     * @see Window.java
+     * This method will invoke when user create any mouse click event, then
+     * this method will response a corresponding response.
+     */
     @Override
     public void mouseClickd(int x, int y) {
         if(paused) return;
@@ -320,11 +386,18 @@ public class Blood extends Window{
         checkToolsClick(x, y);
         toolsClicked = false;
     }
+    /**
+     * Object finalize will invoke when this class object will release as
+     * a garbage then this will fire up and show a log information.
+     */
     @Override
     protected void finalize() {
         Logger.getLogger(getClass().getName()).log(Level.SEVERE,"obj released as garbage");
     }
-    // Button events and file save 
+    /**
+     * A loop will check whether the coordinate position is under any cell structure 
+     * or not;
+     */
     private void checkCellClicked(int x, int y){
         cellClicked = false;
         for(int i=0; i<TOTAL; i++){
@@ -354,6 +427,10 @@ public class Blood extends Window{
             }
         }
     }
+    /**
+     * This method will invoke when user clicked neither in tools nor in 
+     * any of cells; this will decrease the selected tool quantity.
+     */
     private void attackReaction(int index){
         if(selectedTool == -1){
             return;
@@ -375,6 +452,11 @@ public class Blood extends Window{
             currentPoint -=4;
         }
     }
+    /**
+     * This method will invoke when user click any of cells, if the
+     * selected tool is available for this level then user will 
+     * rewarded otherwise user will lose some point.
+     */
     private void onAction(int index){
         if(selectedTool == -1){
             return;
@@ -428,6 +510,11 @@ public class Blood extends Window{
             surgery-=1;
         }
     }
+    /**
+     * This method check whether the clicked coordinate under 
+     * any of tools or not.If yes, then tools clicked will be true 
+     * for indicate in cell click method.
+     */
     private void checkToolsClick(int x, int y){
         for(int i=0; i<tools.length; i++){
             if(tools[i].isInside(x, y)){
@@ -438,7 +525,14 @@ public class Blood extends Window{
             }
         }
     }
-    
+    /**
+     * User information save in info.FILE
+     * <br>Sequence:
+     *  <ol>
+     * <li>userName</li><li>userPoint</li><li>userCash</li><li>cell</li>
+     * <li>chemo</li><li>radition</li><li>surgery</li>
+     * </ol>
+     */
     private void save(){
         new Thread(new Runnable(){
             public void run(){

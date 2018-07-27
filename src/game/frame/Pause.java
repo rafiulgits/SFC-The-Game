@@ -13,7 +13,7 @@ import object.structure.Square;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class Pause extends Window{
     
@@ -93,11 +93,6 @@ public class Pause extends Window{
         if(key == KeyEvent.VK_ESCAPE){
             manager.loadReleased();
         }
-    }
-
-    @Override
-    public void keyTyped(int key) {
-        
     }
 
     @Override

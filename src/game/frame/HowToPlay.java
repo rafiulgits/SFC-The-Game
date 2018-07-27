@@ -18,9 +18,12 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class HowToPlay extends Window{
+    /**
+     * Organize HowToPlay activity
+     */
     
     private ArrayList<String> store;
     private Font textFont,headerFont;
@@ -85,11 +88,6 @@ public class HowToPlay extends Window{
         if(key==KeyEvent.VK_ESCAPE || key==KeyEvent.VK_BACK_SPACE){
             manager.loadReleased();
         }
-    }
-
-    @Override
-    public void keyTyped(int key) {
-        
     }
 
     @Override

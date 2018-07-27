@@ -8,7 +8,9 @@ import java.awt.Graphics2D;
  * @author hp
  */
 public abstract class Window {
-    //all windows
+    /**
+     * @param manager Controller any of Window extended class
+     */
     public static final int MENU = 0;
     public static final int NEW_USER = 1;
     public static final int DASHBOARD = 2;
@@ -21,11 +23,12 @@ public abstract class Window {
     public static final int HOW_TO_PLAY = 9;
 
     protected GameManager manager;
-    
+    /**
+     * Interface for extended classes
+     */
     public abstract void update();
     public abstract void draw(Graphics2D graph);
     public abstract void resume();
     public abstract void keyPressed(int key);
-    public abstract void keyTyped(int key);
     public abstract void mouseClickd(int x, int y);
 }

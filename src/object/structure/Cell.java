@@ -1,7 +1,7 @@
 package object.structure;
 /**
  *
- * @author hp
+ * @author rafiul
  */
 public class Cell extends Square{
     private boolean cancer;

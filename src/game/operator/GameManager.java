@@ -133,9 +133,6 @@ public class GameManager {
     public void keyPressed(int key){
         currentWindow.keyPressed(key);
     }
-    public void keyTyped(int key){
-        currentWindow.keyTyped(key);
-    }
     public void mouseClicked(int x, int y){
         currentWindow.mouseClickd(x, y);
     }

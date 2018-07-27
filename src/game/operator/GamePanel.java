@@ -112,7 +112,7 @@ public class GamePanel extends JPanel
 
     @Override
     public void keyTyped(KeyEvent e) {
-        manager.keyTyped(e.getKeyCode());
+        
     }
 
     @Override

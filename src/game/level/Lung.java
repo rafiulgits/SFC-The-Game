@@ -26,7 +26,7 @@ import object.structure.Square;
 
 /**
  *
- * @author hp
+ * @author rafiul islam
  */
 public class Lung extends Window{
 
@@ -294,11 +294,6 @@ public class Lung extends Window{
             pausedTime = System.currentTimeMillis();
             manager.loadWindow(Window.PAUSE);
         }
-    }
-
-    @Override
-    public void keyTyped(int key) {
-        
     }
 
     @Override

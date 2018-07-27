@@ -77,11 +77,6 @@ public class Opening extends Window{
     }
 
     @Override
-    public void keyTyped(int key) {
-        
-    }
-
-    @Override
     public void mouseClickd(int x, int y) {
         System.out.println();
     }
