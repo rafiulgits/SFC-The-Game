@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import object.structure.Sound;
 import object.structure.Square;
+import game.frame.utils.FileManager;
 
 /**
  *
@@ -118,21 +119,7 @@ public class Menu extends Window{
     }
     
     private boolean isSaved(){
-        File file = new File("res/files/info.FILE");
-        try {
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            String temp = br.readLine();
-            br.close();
-            fr.close();
-            if(temp.substring(0,1).equals(" ")){
-                return false;
-            }
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex){
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return true;
+        String temp = FileManager.readTheFile("res/files/info.FILE")
+        return temp.substring(0,1).equals(" ");
     }
 }

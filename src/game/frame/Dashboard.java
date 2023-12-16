@@ -1,5 +1,6 @@
 package game.frame;
 
+import game.frame.utils.FileManager;
 import game.operator.Game;
 import game.operator.GameManager;
 import java.awt.Color;
@@ -74,21 +75,8 @@ public class Dashboard extends Window{
         radioImg = Game.getImage("/image/level/radiation.png");
         surgeryImg = Game.getImage("/image/level/scissor.png");
     }
-    private void loadInformations(){    
-        String store = "";
-        try {
-            File file = new File("res/files/info.FILE");
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String temp;
-            while((temp=br.readLine()) != null){
-                store += temp;
-            }
-            br.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex){
-            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void loadInformations(){
+        String store = FileManager.readTheFile("res/files/info.FILE");
         
         StringTokenizer st = new StringTokenizer(store,":");
         userName = st.nextElement().toString();

@@ -1,5 +1,6 @@
 package game.frame;
 
+import game.frame.utils.FileManager;
 import game.operator.Game;
 import game.operator.GameManager;
 import java.awt.Color;
@@ -38,20 +39,7 @@ public class HowToPlay extends Window{
         loadFile();
     }
     private void loadFile(){
-        String data = "";
-        File file = new File("res/files/instruction.FILE");
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String temp;
-            while((temp=br.readLine()) != null){
-                data+=temp;
-            }
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(HowToPlay.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(HowToPlay.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        String data = FileManager.readTheFile("res/files/instruction.FILE");
         StringTokenizer st = new StringTokenizer(data,"#");
         while(st.hasMoreElements()){
             store.add(st.nextElement().toString());
