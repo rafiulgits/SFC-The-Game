@@ -1,5 +1,6 @@
 package game.frame;
 
+import game.frame.utils.FileManager;
 import game.operator.Game;
 import game.operator.GameManager;
 import java.awt.Color;
@@ -38,29 +39,9 @@ public class NewUser extends Window{
         errorSound = Game.getSound("error.wav");
     }
     private void saveUser(){
-        File file = new File("res/files/info.FILE");
-        try {
-            FileWriter fw = new FileWriter(file);
-            BufferedWriter bw = new BufferedWriter(fw);
-            /**  
-             ** File:1 will write 
-             * 1. Username
-             * 2. Initial Point = 0,
-             * 3. Initial User cash = 0,
-             * 4. Cell
-             * 5. Chemo
-             * 6. Radiation
-             * 7. Surgery 
-             */
-            bw.write(userName+":"+"0:"+"400:0:0:0:0");
-            
-            bw.flush();
-            fw.flush();
-            bw.close();
-            fw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(NewUser.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        String content = userName+":"+"0:"+"400:0:0:0:0";
+        String root = "res/files/info.FILE";
+        FileManager.writeTheFile(root, content);
     }
     //override methods
     @Override
